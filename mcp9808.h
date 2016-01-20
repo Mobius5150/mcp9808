@@ -23,9 +23,31 @@
 #define MCP9808_H_
 
 #include "temperatures.h"
-#include "Defines.h"
 #include <avr/builtins.h>
 
+/************************************************************************/
+/* You can edit the below, but the better way is to simply define the   */
+/* constants in your own code and the library will use those.           */
+/************************************************************************/
+#ifndef MCP9808_INT8_T
+#define MCP9808_INT8_T int8_t
+#endif
+
+#ifndef MCP9808_UINT8_T
+#define MCP9808_UINT8_T int8_t
+#endif
+
+#ifndef MCP9808_INT16_T
+#define MCP9808_INT16_T int16_t
+#endif
+
+#ifndef MCP9808_UINT16_T
+#define MCP9808_UINT16_T int16_t
+#endif
+
+/************************************************************************/
+/* Stop Editing! The below is MCP9808 code.                             */
+/************************************************************************/
 #define MCP9808_REG_CONFIG          0x01
 #define MCP9808_REG_TUPPER          0x02
 #define MCP9808_REG_TLOWER          0x03
@@ -96,27 +118,27 @@ typedef enum {
 } MCP9808_SHUTDOWN_STATE;
 
 typedef struct {
-	int8_t Address;
-	int16_t ManufacturerId;
-	int16_t DeviceId;
-	uint16_t Configuration;
-	int16_t TUpper;
-	int16_t TLower;
-	int16_t TCrit;
-	uint8_t Resolution;
-	int16_t Temperature;
+	MCP9808_INT8_T   Address;
+	MCP9808_INT16_T  ManufacturerId;
+	MCP9808_INT16_T  DeviceId;
+	MCP9808_UINT16_T Configuration;
+	MCP9808_INT16_T  TUpper;
+	MCP9808_INT16_T  TLower;
+	MCP9808_INT16_T  TCrit;
+	MCP9808_UINT16_T Resolution;
+	MCP9808_INT16_T  Temperature;
 } MCP9808_DEVICE;
 
-int16_t mcp9808_get_temp_int(int16_t read_value);
-float   mcp9808_get_temp_float(int16_t read_value);
-MCP9808_DEVICE mcp9808_load_device(int16_t address);
+MCP9808_INT16_T mcp9808_get_temp_int(MCP9808_INT16_T read_value);
+float   mcp9808_get_temp_float(MCP9808_INT16_T read_value);
+MCP9808_DEVICE mcp9808_load_device(MCP9808_INT16_T address);
 void mcp9808_reset_interrupts(MCP9808_DEVICE *device);
-int16_t mcp9808_read_temperature(MCP9808_DEVICE *device);
-int8_t mcp9808_write_and_verify_int16(MCP9808_DEVICE *device, int8_t reg, uint16_t value);
-int8_t mcp9808_write_and_verify_int8(MCP9808_DEVICE *device, int8_t reg, uint8_t value);
-int8_t mcp9808_apply_temperature_configuration(MCP9808_DEVICE *device);
-void mcp9808_set_temperature(int16_t *tempVar, int8_t tempC);
-int8_t mcp9808_apply_configuration(MCP9808_DEVICE *device);
+MCP9808_INT16_T mcp9808_read_temperature(MCP9808_DEVICE *device);
+MCP9808_INT8_T mcp9808_write_and_verify_int16(MCP9808_DEVICE *device, MCP9808_INT8_T reg, MCP9808_UINT16_T value);
+MCP9808_INT8_T mcp9808_write_and_verify_int8(MCP9808_DEVICE *device, MCP9808_INT8_T reg, MCP9808_UINT8_T value);
+MCP9808_INT8_T mcp9808_apply_temperature_configuration(MCP9808_DEVICE *device);
+void mcp9808_set_temperature(MCP9808_INT16_T *tempVar, MCP9808_INT8_T tempC);
+MCP9808_INT8_T mcp9808_apply_configuration(MCP9808_DEVICE *device);
 void mcp9808_set_is_shutdown(MCP9808_DEVICE *device, MCP9808_SHUTDOWN_STATE is_shutdown);
 
 #endif /* MCP9808_H_ */

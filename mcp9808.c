@@ -27,27 +27,27 @@
 /* Converts the value read from the TA register on the MCP9808 to an int*/
 /* representation that is 16x larger than the actual value.             */
 /************************************************************************/
-inline int16_t mcp9808_get_temp_int(int16_t read_value) {
+inline MCP9808_INT16_T mcp9808_get_temp_int(MCP9808_INT16_T read_value) {
 	if (read_value & 0x1000) {
 		// Negative temperature. Extend sign bit and shift right by 4
-		return (int16_t)(0xF000 | read_value) + T_16xKELVIN;
+		return (MCP9808_INT16_T)(0xF000 | read_value) + T_16xKELVIN;
 	} else {
 		// Positive temperature. Extend sign bit and shift right by 4
-		return (int16_t)(0x0FFF & read_value) + T_16xKELVIN;
+		return (MCP9808_INT16_T)(0x0FFF & read_value) + T_16xKELVIN;
 	}
 }
 
 /************************************************************************/
 /* Converts the value read from the TA register on the MCP9808 to float */
 /************************************************************************/
-inline float   mcp9808_get_temp_float(int16_t read_value) {
+inline float   mcp9808_get_temp_float(MCP9808_INT16_T read_value) {
 	return ((float)mcp9808_get_temp_int(read_value)) / 16.0;
 }
 
 /************************************************************************/
 /* Retrieves the information for the specified MCP9808 Device.          */
 /************************************************************************/
-MCP9808_DEVICE mcp9808_load_device(int16_t address) {
+MCP9808_DEVICE mcp9808_load_device(MCP9808_INT16_T address) {
 	MCP9808_DEVICE device;
 	
 	device.Address = address;
@@ -77,12 +77,12 @@ void mcp9808_reset_interrupts(MCP9808_DEVICE *device) {
 	read_twi_int16(device->Address);
 }
 
-int8_t mcp9808_apply_configuration(MCP9808_DEVICE *device) {
-	int8_t result = MCP9808_OK;
+MCP9808_INT8_T mcp9808_apply_configuration(MCP9808_DEVICE *device) {
+	MCP9808_INT8_T result = MCP9808_OK;
 	
 	// Read the config
 	send_twi_byte(device->Address, MCP9808_REG_CONFIG, 0);
-	int16_t config = read_twi_int16(device->Address);
+	MCP9808_INT16_T config = read_twi_int16(device->Address);
 	
 	if (config & _BV(MCP9808_CONFIG_WIN_LOCK) || config & _BV(MCP9808_CONFIG_CRIT_LOCK)) {
 		result |= 0b0001;
@@ -101,7 +101,7 @@ int8_t mcp9808_apply_configuration(MCP9808_DEVICE *device) {
 	return result;
 }
 
-void mcp9808_set_temperature(int16_t *tempVar, int8_t tempC) {
+void mcp9808_set_temperature(MCP9808_INT16_T *tempVar, MCP9808_INT8_T tempC) {
 	if (tempC & 0x80) {
 		*tempVar = (0x1000 | (tempC << 4)) & MCP9808_TEMP_LIM_REG_MASK;
 	} else {
@@ -109,32 +109,32 @@ void mcp9808_set_temperature(int16_t *tempVar, int8_t tempC) {
 	}
 }
 
-int8_t mcp9808_apply_temperature_configuration(MCP9808_DEVICE *device) {
-	int8_t result = MCP9808_OK;
+MCP9808_INT8_T mcp9808_apply_temperature_configuration(MCP9808_DEVICE *device) {
+	MCP9808_INT8_T result = MCP9808_OK;
 	
 	// Write the config
-	if (mcp9808_write_and_verify_int16(device, MCP9808_REG_TUPPER, (uint16_t)device->TUpper & MCP9808_TEMP_REG_MASK)) {
+	if (mcp9808_write_and_verify_int16(device, MCP9808_REG_TUPPER, (MCP9808_UINT16_T)device->TUpper & MCP9808_TEMP_REG_MASK)) {
 		result |= 0b0001;
 	}
 	
-	if (mcp9808_write_and_verify_int16(device, MCP9808_REG_TLOWER, (uint16_t)device->TLower & MCP9808_TEMP_REG_MASK)) {
+	if (mcp9808_write_and_verify_int16(device, MCP9808_REG_TLOWER, (MCP9808_UINT16_T)device->TLower & MCP9808_TEMP_REG_MASK)) {
 		result |= 0b0010;
 	}
 	
-	if (mcp9808_write_and_verify_int16(device, MCP9808_REG_TCRIT, (uint16_t)device->TCrit & MCP9808_TEMP_REG_MASK)) {
+	if (mcp9808_write_and_verify_int16(device, MCP9808_REG_TCRIT, (MCP9808_UINT16_T)device->TCrit & MCP9808_TEMP_REG_MASK)) {
 		result |= 0b0100;
 	}
 	
 	return result;
 }
 
-int8_t mcp9808_write_and_verify_int16(MCP9808_DEVICE *device, int8_t reg, uint16_t value) {
-	int8_t buff[3] = { reg, (value & 0x7F00) >> 8, value & 0x00FF };
+MCP9808_INT8_T mcp9808_write_and_verify_int16(MCP9808_DEVICE *device, MCP9808_INT8_T reg, MCP9808_UINT16_T value) {
+	MCP9808_INT8_T buff[3] = { reg, (value & 0x7F00) >> 8, value & 0x00FF };
 	send_twi_bin_data(device->Address, 3, buff);
 	
 	// Verify config
 	send_twi_byte(device->Address, reg, 0);
-	int16_t result = read_twi_int16(device->Address);
+	MCP9808_INT16_T result = read_twi_int16(device->Address);
 	if (value != result) {
 		return 1;
 	}
@@ -142,8 +142,8 @@ int8_t mcp9808_write_and_verify_int16(MCP9808_DEVICE *device, int8_t reg, uint16
 	return MCP9808_OK;
 }
 
-int8_t mcp9808_write_and_verify_int8(MCP9808_DEVICE *device, int8_t reg, uint8_t value) {
-	int8_t buff[2] = { reg, value };
+MCP9808_INT8_T mcp9808_write_and_verify_int8(MCP9808_DEVICE *device, MCP9808_INT8_T reg, MCP9808_UINT8_T value) {
+	MCP9808_INT8_T buff[2] = { reg, value };
 	send_twi_bin_data(device->Address, 2, buff);
 	
 	// Verify config
@@ -155,7 +155,7 @@ int8_t mcp9808_write_and_verify_int8(MCP9808_DEVICE *device, int8_t reg, uint8_t
 	return MCP9808_OK;
 }
 
-int16_t mcp9808_read_temperature(MCP9808_DEVICE *device) {
+MCP9808_INT16_T mcp9808_read_temperature(MCP9808_DEVICE *device) {
 	send_twi_byte(device->Address, MCP9808_REG_TA, 0);
 	device->Temperature = read_twi_int16(device->Address);
 	return device->Temperature;
