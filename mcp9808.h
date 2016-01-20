@@ -45,6 +45,10 @@
 #define MCP9808_UINT16_T int16_t
 #endif
 
+#ifndef MCP9808_FLOAT_T
+#define MCP9808_FLOAT_T float
+#endif
+
 /************************************************************************/
 /* Stop Editing! The below is MCP9808 code.                             */
 /************************************************************************/
@@ -130,7 +134,7 @@ typedef struct {
 } MCP9808_DEVICE;
 
 MCP9808_INT16_T mcp9808_get_temp_int(MCP9808_INT16_T read_value);
-float   mcp9808_get_temp_float(MCP9808_INT16_T read_value);
+MCP9808_FLOAT_T   mcp9808_get_temp_float(MCP9808_INT16_T read_value);
 MCP9808_DEVICE mcp9808_load_device(MCP9808_INT16_T address);
 void mcp9808_reset_interrupts(MCP9808_DEVICE *device);
 MCP9808_INT16_T mcp9808_read_temperature(MCP9808_DEVICE *device);

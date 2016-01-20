@@ -40,8 +40,8 @@ inline MCP9808_INT16_T mcp9808_get_temp_int(MCP9808_INT16_T read_value) {
 /************************************************************************/
 /* Converts the value read from the TA register on the MCP9808 to float */
 /************************************************************************/
-inline float   mcp9808_get_temp_float(MCP9808_INT16_T read_value) {
-	return ((float)mcp9808_get_temp_int(read_value)) / 16.0;
+inline MCP9808_FLOAT_T mcp9808_get_temp_float(MCP9808_INT16_T read_value) {
+	return ((MCP9808_FLOAT_T)mcp9808_get_temp_int(read_value)) / 16.0;
 }
 
 /************************************************************************/
