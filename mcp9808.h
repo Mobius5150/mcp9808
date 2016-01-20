@@ -31,7 +31,7 @@
 #endif
 
 #ifndef MCP9808_UINT8_T
-#define MCP9808_UINT8_T int8_t
+#define MCP9808_UINT8_T uint8_t
 #endif
 
 #ifndef MCP9808_INT16_T
@@ -39,7 +39,7 @@
 #endif
 
 #ifndef MCP9808_UINT16_T
-#define MCP9808_UINT16_T int16_t
+#define MCP9808_UINT16_T uint16_t
 #endif
 
 #ifndef MCP9808_FLOAT_T
