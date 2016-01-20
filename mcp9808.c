@@ -30,10 +30,10 @@
 inline MCP9808_INT16_T mcp9808_get_temp_int(MCP9808_INT16_T read_value) {
 	if (read_value & 0x1000) {
 		// Negative temperature. Extend sign bit and shift right by 4
-		return (MCP9808_INT16_T)(0xF000 | read_value) + T_16xKELVIN;
+		return (MCP9808_INT16_T)(0xF000 | read_value);
 	} else {
 		// Positive temperature. Extend sign bit and shift right by 4
-		return (MCP9808_INT16_T)(0x0FFF & read_value) + T_16xKELVIN;
+		return (MCP9808_INT16_T)(0x0FFF & read_value);
 	}
 }
 

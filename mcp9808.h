@@ -22,9 +22,6 @@
 #ifndef MCP9808_H_
 #define MCP9808_H_
 
-#include "temperatures.h"
-#include <avr/builtins.h>
-
 /************************************************************************/
 /* You can edit the below, but the better way is to simply define the   */
 /* constants in your own code and the library will use those.           */
